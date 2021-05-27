@@ -2,37 +2,64 @@
 #Date: 27.09.20
 #Desc: This web application serves a motion JPEG stream
 # main.py
-# import the necessary packages
-from flask import Flask, render_template, Response, request
+
 from camera import VideoCamera
 import time
 import threading
 import os
+import io
+import PIL.Image as Image
+from time import sleep
 
-pi_camera = VideoCamera(flip=False) # flip pi camera if upside down.
+from bluetooth_handler import bluetooth_handler
+from camera import pi_camera
+from mood import mood_handler
+from sound_system import sound_system
+from light import light
 
-# App Globals (do not edit)
-app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return render_template('index.html') #you can customze index.html here
-
-def gen(camera):
-    #get camera frame
+if __name__ == '__main__':
+    # TODO get frames periodically and detect face, send the image to the server
+    # TODO get mood, play music and open light accordingly
+    
     while True:
-        frame = camera.get_frame()
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        # if pi_camera.detect_face():
+        if bluetooth_handler.detect_new_devices(print_devices=True):
+            print('start mood detection...')
+            
+            detected_mood = pi_camera.detect_mood()
+            print(detected_mood)
+            
+            if detected_mood is not None:
+                light.open_light(mood_handler.get_mood_light(detected_mood))
+                sound_system.play_music(mood_handler.get_mood_music(detected_mood))
+            
+        else:
+            # sleep(2)
+            pass
+
+'''
+from flask import Flask, render_template, Response, request
+
+app = Flask(__name__)
 
 @app.route('/video_feed')
 def video_feed():
     return Response(gen(pi_camera),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
-if __name__ == '__main__':
-
-    app.run(host='0.0.0.0', debug=False)
+@app.route('/')
+def index():
+    return render_template('index.html') #you can customze index.html here
     
 
+def gen(camera):
+    #get camera frame
+    while True:
+        frame = camera.get_frame()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frapi-me + b'\r\n\r\n')
 
+
+# app.run(host='0.0.0.0', debug=False)
+'''
