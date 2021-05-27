@@ -23,8 +23,8 @@ if __name__ == '__main__':
     # TODO get mood, play music and open light accordingly
     
     while True:
-        # if pi_camera.detect_face():
-        if bluetooth_handler.detect_new_devices(print_devices=True):
+        #if bluetooth_handler.detect_new_devices(print_devices=True):
+        if pi_camera.detect_face():
             print('start mood detection...')
             
             detected_mood = pi_camera.detect_mood()
@@ -33,10 +33,10 @@ if __name__ == '__main__':
             if detected_mood is not None:
                 light.open_light(mood_handler.get_mood_light(detected_mood))
                 sound_system.play_music(mood_handler.get_mood_music(detected_mood))
-            
-        else:
-            # sleep(2)
-            pass
+                
+                sleep(4)
+                
+        sleep(2)
 
 '''
 from flask import Flask, render_template, Response, request

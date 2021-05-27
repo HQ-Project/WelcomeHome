@@ -1,0 +1,21 @@
+https://domoticproject.com/controlling-philips-hue-lights-with-raspberry-pi/
+
+username: dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm
+
+bridgedeki tum lambalar
+curl 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights'
+
+belirtilen lambanin ayrintisi
+curl 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights/1'
+
+kapat/ac
+curl -X PUT -H 'Content-Type: application/json' -d '{"on":false}' 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights/1/state'
+curl -X PUT -H 'Content-Type: application/json' -d '{"on":true}' 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights/1/state'
+
+brightness & color
+bri: [1, 254]
+ct: [153, 500]
+curl -X PUT -H 'Content-Type: application/json' -d '{"bri":110, "ct":153}' 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights/1/state'
+
+alert
+curl -X PUT -H 'Content-Type: application/json' -d '{"alert": "select"}' 'http://192.168.1.25/api/dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm/lights/1/state'

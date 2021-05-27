@@ -4,10 +4,10 @@ class Mood:
     def __init__(self):
         # TODO get them from website/application
         self.mood_lights = {
-            'happy': 'happy_light',
-            'sad': 'sad_light',
-            'neutral': 'neutral_light',
-            'angry': 'angry_light'
+            'happy': {"bri":254, "ct":153},
+            'sad': {"bri":110, "ct":153},
+            'neutral': {"bri":110, "ct":300},
+            'angry': {"bri":254, "ct":500}
         }
         
         # TODO get them from website/application
