@@ -8,6 +8,7 @@ import imutils
 import time
 import numpy as np
 import random
+import requests
 
 class VideoCamera(object):
     def __init__(self, flip = False):
@@ -49,6 +50,9 @@ class VideoCamera(object):
     
     def send_frame(self, image_bytes):
         # TODO
+        
+        # requests.post('http://')
+        
         moods = ['happy', 'sad', 'neutral', 'angry']
         index = int(random.random() * len(moods))
         return moods[index]
