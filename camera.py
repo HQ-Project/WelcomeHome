@@ -27,13 +27,20 @@ class VideoCamera(object):
         return frame
     
     def detect_face(self):
-        # TODO
-        return True
+        img = self.get_frame()
+        # Load the cascade
+        face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_default.xml')
+        # Convert into grayscale
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # Detect faces
+        faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        return len(faces) > 0
     
     def detect_mood(self):
         begin_time = time.time()
         
         while True:
+            
             mood = self.send_frame(self.get_frame())
             
             if mood is not None:
