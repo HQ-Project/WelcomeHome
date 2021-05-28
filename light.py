@@ -11,11 +11,13 @@ class Light:
     def open_light(self, mode):
         # TODO connect hue light and open light
         
-        res = requests.put("http://{}/api/{}/lights/1/state".format(bridge_ip, hue_username),
+        try:
+            requests.put("http://{}/api/{}/lights/1/state".format(bridge_ip, hue_username),
                            headers={"content-type": "application/json"},
-                           json=mode)
-        
-        # print(res.text)
+                           json=mode,
+                           timeout=3)
+        except:
+            print('Light request failed')
 
 
 light = Light()

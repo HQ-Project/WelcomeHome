@@ -28,19 +28,22 @@ class VideoCamera(object):
     
     def detect_face(self):
         img = self.get_frame()
+        
         # Load the cascade
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades +'haarcascade_frontalface_default.xml')
         # Convert into grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        
+        # print(faces)
+        
         return len(faces) > 0
     
     def detect_mood(self):
         begin_time = time.time()
         
         while True:
-            
             mood = self.send_frame(self.get_frame())
             
             if mood is not None:
@@ -51,14 +54,26 @@ class VideoCamera(object):
 
     def get_frame(self):
         frame = self.flip_if_needed(self.vs.read())
-        ret, jpeg = cv2.imencode('.jpg', frame)
+        return frame
         
-        return jpeg.tobytes()
+        '''
+        ret, jpeg = cv2.imencode('.jpg', frame)
+        return jpeg
+        '''
     
-    def send_frame(self, image_bytes):
+    def send_frame(self, image_array):
         # TODO
         
-        # requests.post('http://')
+        try:
+            res = requests.post('http://{}', format(),
+                          json={"data": image_array},
+                          timeout=3)
+            
+            print('detected mood:', res.text)
+            return res.text
+        except:
+            print('Failed mood detection')
+            pass
         
         moods = ['happy', 'sad', 'neutral', 'angry']
         index = int(random.random() * len(moods))
