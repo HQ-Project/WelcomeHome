@@ -1,0 +1,7 @@
+30:C0:1B:A9:D7:1D
+
+
+https://c.mirifique.ch/2016/08/28/raspberry-pi-3-and-bluetooth-speaker-setup-command-line/
+https://www.instructables.com/Turn-your-Raspberry-Pi-into-a-Portable-Bluetooth-A/
+https://www.raspberrypi.org/forums/viewtopic.php?p=1836230
+https://wiretuts.com/connecting-bluetooth-audio-device-to-raspberry-pi

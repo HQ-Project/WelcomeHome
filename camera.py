@@ -1,19 +1,16 @@
-#Modified by smartbuilds.io
-#Date: 27.09.20
-#Desc: This scrtipt script..
-
 import cv2
-from imutils.video.pivideostream import PiVideoStream
 import imutils
 import time
 import numpy as np
 import random
 import requests
+from imutils.video.pivideostream import PiVideoStream
+
+from constants import detection_duration
+
 
 class VideoCamera(object):
     def __init__(self, flip = False):
-        self.DETECTION_DURATION = 120
-        
         self.vs = PiVideoStream().start()
         self.flip = flip
         time.sleep(2.0)
@@ -36,8 +33,6 @@ class VideoCamera(object):
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
         
-        # print(faces)
-        
         return len(faces) > 0
     
     def detect_mood(self):
@@ -49,7 +44,7 @@ class VideoCamera(object):
             if mood is not None:
                 return mood
             
-            if time.time() - begin_time > self.DETECTION_DURATION:
+            if time.time() - begin_time > detection_duration:
                 return None
 
     def get_frame(self):
@@ -62,9 +57,8 @@ class VideoCamera(object):
         '''
     
     def send_frame(self, image_array):
-        # TODO
-        
         try:
+            # TODO send request
             res = requests.post('http://{}', format(),
                           json={"data": image_array},
                           timeout=3)
@@ -75,9 +69,7 @@ class VideoCamera(object):
             print('Failed mood detection')
             pass
         
-        moods = ['happy', 'sad', 'neutral', 'angry']
-        index = int(random.random() * len(moods))
-        return moods[index]
+        return int(random.random() * 7)
 
 
 pi_camera = VideoCamera(flip=True)
