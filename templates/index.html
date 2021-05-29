@@ -10,9 +10,75 @@
 
     <title>Welcome Home</title>
   </head>
-  <body>
-    <h1>Hello, world!</h1>
+  <body class="bg-light">
     
+    <div class="container">
+      <div class="card mt-5 p-3">
+        <h3 class="h3 text-center">Add New Sound</h3>
+        <form action="/add-custom-sound" method="post">
+          <div class="form-group">
+            <label for="youtube-link">Youtube Link</label>
+            <input name="youtube-link" type="text" class="form-control" id="youtube-link" placeholder="Enter Youtube Link" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="sound-name">Sound name</label>
+            <input name="sound-name" type="text" class="form-control" id="sound-name" placeholder="Enter Sound Name" required>
+          </div>
+          
+          <div>
+            <label>Mood</label>
+            <select class="form-control" id="sound-mood" name="sound-mood">
+              <option>angry</option>
+              <option>disgust</option>
+              <option>fear</option>
+              <option>happy</option>
+              <option>neutral</option>
+              <option>sad</option>
+              <option>suprise</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+        </form>
+      </div>
+      
+      <div class="card my-5 p-3">
+        <h3 class="h3 text-center">Light settings</h3>
+        <form action="/add-custom-light" method="post">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="brightness">Brightness</label>
+                <input name="brightness" type="number" min=1 max=254 class="form-control" id="brightness" placeholder="Between 1 - 254" required>
+              </div>
+            </div>
+            
+            <div class="col-6">
+              <div class="form-group">
+                <label for="color-temperature">Color Temperature</label>
+                <input name="color-temperature" type="number" min=153 max = 500 class="form-control" id="color-temperature" placeholder="Between 153 - 500" required>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <label>Mood</label>
+            <select class="form-control" id="light-mood" name="light-mood">
+              <option>angry</option>
+              <option>disgust</option>
+              <option>fear</option>
+              <option>happy</option>
+              <option>neutral</option>
+              <option>sad</option>
+              <option>suprise</option>
+            </select>
+          </div>
+          
+          <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
+        </form>
+      </div>
+    </div>
     
     
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
