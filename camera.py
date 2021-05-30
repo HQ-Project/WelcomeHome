@@ -7,9 +7,7 @@ import json
 import requests
 from imutils.video.pivideostream import PiVideoStream
 
-from watson import deviceCli
 from constants import detection_duration, mood_server_ip
-
 
 class VideoCamera(object):
     def __init__(self, flip = False):
@@ -18,9 +16,6 @@ class VideoCamera(object):
         self.last_detected = []
         self.wait_response = False
         self.result = -1
-
-        deviceCli.connect()
-        deviceCli.commandCallback = self.myCommandCallback
 
         time.sleep(2.0)
 
@@ -47,48 +42,28 @@ class VideoCamera(object):
             return True
         
         return False
-
-    def myCommandCallback(self, cmd):
-      if cmd.command == "image_response":
-        response = cmd.data
-
-        if isinstance(response["emotions"], int):
-          return response["emotions"]
-        
-        user_weights = {}
-        with open(users_path, "r") as f:
-            data = json.load(f)
-        
-        for user in data["users"]:
-            user_weights[user["name"]] = user["weight"]
-        
-        emotions = np.array(response["emotions"])
-        names = response["names"]
-        
-        result = np.zeros(7)
-        for i, name in enumerate(names):
-            result += emotions[i] * user_weights[name]
-          
-        self.result = np.argmax(result)
-        self.wait_response = False
     
-    def detect_mood(self):
-        self.send_frame(self.last_detected)
+    def detect_mood(self, deviceCli):
+        self.send_frame(self.last_detected, deviceCli)
 
         self.wait_response = True
 
-        while self.wait_response:
-          pass
+        print("begin while")
+        #while self.wait_response:
+        time.sleep(3)
+        print("end while")
         
         return self.result
 
     def get_frame(self):
         return self.flip_if_needed(self.vs.read())
 
-    def send_frame(self, image_array):
+    def send_frame(self, image_array, deviceCli):
         try:
-          	data = {"image": image_array.tolist()}
-	          deviceCli.publishEvent(event="image", data=data, msgFormat="json")
+            image_array = cv2.resize(image_array, (80, 60), interpolation=cv2.INTER_AREA)
+            data = {"image": image_array.tolist()}
+            deviceCli.publishEvent(event="image", data=data, msgFormat="json")
+            print('Sent image')
         except Exception as e:
             print('Mood detection failed:', e)
 
