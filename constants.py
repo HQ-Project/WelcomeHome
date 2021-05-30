@@ -2,7 +2,7 @@ hue_username = 'dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm'
 
 
 bridge_ip = '192.168.1.25'
-mood_server_ip = '6cc62c884b28.ngrok.io'
+mood_server_ip = '440cff810d8b.ngrok.io'
 server_port = 8818
 
 cooldown = 5 # TODO

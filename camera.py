@@ -5,6 +5,7 @@ import numpy as np
 import random
 import json
 import requests
+import ast
 from imutils.video.pivideostream import PiVideoStream
 
 from constants import detection_duration, mood_server_ip
@@ -14,6 +15,7 @@ class VideoCamera(object):
     def __init__(self, flip = False):
         self.vs = PiVideoStream().start()
         self.flip = flip
+        self.last_detected = []
         time.sleep(2.0)
 
     def __del__(self):
@@ -34,42 +36,33 @@ class VideoCamera(object):
         # Detect faces
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
         
-        return len(faces) > 0
+        if len(faces) > 0:
+            self.last_detected = img
+            return True
+        
+        return False
     
     def detect_mood(self):
-        begin_time = time.time()
+        moods = self.send_frame(self.last_detected)
         
-        while True:
-            mood = self.send_frame(self.get_frame())
-            
-            if mood is not None:
-                return mood
-            
-            if time.time() - begin_time > detection_duration:
-                return None
+        if isinstance(moods, int):
+            return moods
+        
+        # TODO process moods and get result
+        return moods
 
     def get_frame(self):
-        frame = self.flip_if_needed(self.vs.read())
-        return frame
-        
-        '''
-        ret, jpeg = cv2.imencode('.jpg', frame)
-        return jpeg
-        '''
-    
+        return self.flip_if_needed(self.vs.read())
+
     def send_frame(self, image_array):
         try:
             res = requests.post('http://{}/detect_mood'.format(mood_server_ip),
                           json={"image": image_array.tolist()},
-                          timeout=8)
+                          timeout=8).json()
             
-            print(res)
-            
-            print('detected mood:', res.text)
-            return res.text['emotion']
+            return res['emotions']
         except Exception as e:
-            print(e)
-            print('Failed mood detection')
+            print('Mood detection failed:', e)
             return int(random.random() * 7)
 
 

@@ -21,6 +21,9 @@
         <li class="nav-item" role="presentation">
           <a class="nav-link" id="light-tab" data-toggle="tab" href="#light" role="tab" aria-controls="light" aria-selected="false">Light</a>
         </li>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link" id="user-tab" data-toggle="tab" href="#user" role="tab" aria-controls="user" aria-selected="false">User</a>
+        </li>
       </ul>
       
       <p class="text-success h5 text-center my-2" id="feedback">
@@ -113,7 +116,7 @@
                 </select>
               </div>
               
-              <button type="button" class="btn btn-primary w-100 mt-2" onclick="tryLight()">Try</button>
+              <button type="button" class="btn btn-info w-100 mt-2" onclick="tryLight()">Try</button>
               <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
             </form>
           </div>
@@ -138,6 +141,14 @@
                 {% endfor %}
               </tbody>
             </table>  
+          </div>
+        </div>
+        
+        <div class="tab-pane fade" id="user" role="tabpanel" aria-labelledby="sound-tab">
+          <div class="card my-5 p-3">
+            <h3 class="h3 text-center">New User</h3>
+            
+            <input type="file"/>
           </div>
         </div>
         
