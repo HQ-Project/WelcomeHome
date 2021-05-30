@@ -7,6 +7,7 @@ import json
 import requests
 from imutils.video.pivideostream import PiVideoStream
 
+from watson import deviceCli
 from constants import detection_duration, mood_server_ip
 
 
@@ -15,6 +16,12 @@ class VideoCamera(object):
         self.vs = PiVideoStream().start()
         self.flip = flip
         self.last_detected = []
+        self.wait_response = False
+        self.result = -1
+
+        deviceCli.connect()
+        deviceCli.commandCallback = self.myCommandCallback
+
         time.sleep(2.0)
 
     def __del__(self):
@@ -40,12 +47,13 @@ class VideoCamera(object):
             return True
         
         return False
-    
-    def detect_mood(self):
-        response = self.send_frame(self.last_detected)
-        
+
+    def myCommandCallback(self, cmd):
+      if cmd.command == "image_response":
+        response = cmd.data
+
         if isinstance(response["emotions"], int):
-            return response["emotions"]
+          return response["emotions"]
         
         user_weights = {}
         with open(users_path, "r") as f:
@@ -60,22 +68,29 @@ class VideoCamera(object):
         result = np.zeros(7)
         for i, name in enumerate(names):
             result += emotions[i] * user_weights[name]
+          
+        self.result = np.argmax(result)
+        self.wait_response = False
+    
+    def detect_mood(self):
+        self.send_frame(self.last_detected)
+
+        self.wait_response = True
+
+        while self.wait_response:
+          pass
         
-        return np.argmax(result)
+        return self.result
 
     def get_frame(self):
         return self.flip_if_needed(self.vs.read())
 
     def send_frame(self, image_array):
         try:
-            res = requests.post('http://{}/detect'.format(mood_server_ip),
-                          json={"image": image_array.tolist()},
-                          timeout=8).json()
-            
-            return res
+          	data = {"image": image_array.tolist()}
+	          deviceCli.publishEvent(event="image", data=data, msgFormat="json")
         except Exception as e:
             print('Mood detection failed:', e)
-            return int(random.random() * 7)
 
 
 pi_camera = VideoCamera(flip=True)

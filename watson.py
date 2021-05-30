@@ -11,18 +11,3 @@ authToken = "z0&s36wdlAL-+A*tUd"
 # Initialize the device client.
 deviceOptions = {"org": organization, "type": deviceType, "id": deviceId, "auth-method": authMethod, "auth-token": authToken}
 deviceCli = ibmiotf.device.Client(deviceOptions)
-
-def myCommandCallback(cmd):
-    if cmd.command == "image_response":
-        print(cmd.format)
-        print(cmd.timestamp)
-        print(cmd.data)
-
-# Connect and send a datapoint "hello" with value "world" into the cloud as an event of type "greeting" 10 times
-deviceCli.connect()
-deviceCli.commandCallback = myCommandCallback
-
-while(1):
-	data = {"bebegim": "<3"}
-	deviceCli.publishEvent(event="status", data=data, msgFormat="json")
-	time.sleep(2)
