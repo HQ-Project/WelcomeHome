@@ -5,7 +5,6 @@ import numpy as np
 import random
 import json
 import requests
-import ast
 from imutils.video.pivideostream import PiVideoStream
 
 from constants import detection_duration, mood_server_ip
