@@ -36,7 +36,7 @@ def add_light():
     data = {}
     with open(light_settings_path, "r") as f:
         data = json.load(f)
-    data[request.form['light-mood']] = {"bri": request.form["brightness"], "ct": request.form["color-temperature"]}
+    data[request.form['light-mood']] = {"bri": int(request.form["brightness"]), "ct": int(request.form["color-temperature"])}
     
     with open(light_settings_path, "w") as f:
         json.dump(data, f)
@@ -63,6 +63,12 @@ def add_sound():
             pass
     
     return render_template('index.html', feedback="Successful", sounds=get_sounds(), lights=get_light_settings())
+
+
+@app.route('/stop-music', methods=['get'])
+def stop_music():
+    os.system('mocp -s')
+    return '', 200
 
 
 if __name__ == '__main__':
