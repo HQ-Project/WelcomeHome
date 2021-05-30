@@ -10,6 +10,7 @@ detection_duration = 120
 
 light_settings_path = './light_settings.json'
 sounds_path = './sounds'
+users_path = './users.json'
 
 moods = {
     0: 'neutral',

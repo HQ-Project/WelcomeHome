@@ -5,7 +5,7 @@ import requests
 import time
 from flask import Flask, render_template, Response, request, redirect, url_for
 
-from constants import server_port, light_settings_path, sounds_path, moods, light_settings_path, mood_server_ip
+from constants import server_port, light_settings_path, sounds_path, moods, light_settings_path, mood_server_ip, users_path
 
 
 # TODO delete end points ??
@@ -28,22 +28,30 @@ def get_light_settings():
         return data
 
 
+def get_users():
+    with open(users_path, "r") as f:
+        data = json.load(f)
+        return data
+
+
+def get_index(feedback):
+    return render_template('index.html', feedback=feedback, sounds=get_sounds(), lights=get_light_settings(), users=get_users())
+
+
 @app.route('/')
 def index():
-    return render_template('index.html', feedback="", sounds=get_sounds(), lights=get_light_settings())
+    return get_index("")
 
 
 @app.route('/add-custom-light', methods=['post'])
 def add_light():
-    data = {}
-    with open(light_settings_path, "r") as f:
-        data = json.load(f)
+    data = get_light_settings()
     data[request.form['light-mood']] = {"bri": int(request.form["brightness"]), "ct": int(request.form["color-temperature"])}
     
     with open(light_settings_path, "w") as f:
         json.dump(data, f)
     
-    return render_template('index.html', feedback="Successful", sounds=get_sounds(), lights=get_light_settings())
+    return get_index("Successful")
 
 
 @app.route('/add-custom-sound', methods=['post'])
@@ -63,8 +71,8 @@ def add_sound():
             break
         except:
             pass
-    
-    return render_template('index.html', feedback="Successful", sounds=get_sounds(), lights=get_light_settings())
+        
+    return get_index("Successful")
 
 
 @app.route('/stop-music', methods=['get'])
@@ -93,9 +101,14 @@ def image_upload(username):
 def register_confirm(username):
     print('to be confirmed', username)
     
-    # TODO store user on pi
+    # store user on node
+    data = get_users()
+    data['users'].append({'name': username, 'weight': 1})
     
-    time.sleep(3)
+    with open(users_path, "w") as f:
+        json.dump(data, f)
+    
+    time.sleep(2.5)
     
     try:
         res = requests.get('http://{}/register_confirm/{}/{}'.format(mood_server_ip, 2, username)).json()
@@ -104,6 +117,24 @@ def register_confirm(username):
         print('Error:', e)
     
     return '', 200
+
+
+@app.route('/new-weight', methods=['post'])
+def new_weight():
+    name = request.form['username']
+    weight = request.form['new-weight']
+    
+    data = get_users()
+    for user in data['users']:
+        if user['name'] == name:
+            user['weight'] = weight
+            break
+    
+    with open(users_path, "w") as f:
+        json.dump(data, f)
+    
+    return get_index("Successful")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=server_port, debug=True)
