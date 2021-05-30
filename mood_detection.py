@@ -15,6 +15,8 @@ from constants import cooldown, moods
 
 
 def run_mood_detection():
+    print('Looking for faces...')
+
     while True:
         if pi_camera.detect_face():
             print('Start mood detection...')
@@ -28,10 +30,8 @@ def run_mood_detection():
                 sound_system.play_music(moods[detected_mood])
                 
                 sleep(cooldown)
-            else:
-                sleep(2)
         else:
-            sleep(2)
+            sleep(0.5)
 
 
 if __name__ == '__main__':

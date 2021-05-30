@@ -7,7 +7,7 @@ import json
 import requests
 from imutils.video.pivideostream import PiVideoStream
 
-from constants import detection_duration, mood_server_ip
+from constants import detection_duration, mood_server_ip, users_path
 
 
 class VideoCamera(object):
@@ -42,24 +42,39 @@ class VideoCamera(object):
         return False
     
     def detect_mood(self):
-        moods = self.send_frame(self.last_detected)
-        
-        if isinstance(moods, int):
-            return moods
-        
-        # TODO process moods and get result
-        return moods
+        response = self.send_frame(self.last_detected)
+
+        print(type(response["found"]))
+        print(response["found"])
+        if response["found"] == False:
+            return int(random.random() * 7)
+
+        user_weights = {}
+        with open(users_path, "r") as f:
+            data = json.load(f)
+
+        for user in data["users"]:
+            user_weights[user["name"]] = user["weight"]
+
+        emotions = np.array(response["emotions"])
+        names = response["names"]
+
+        result = np.zeros(7)
+        for i, name in enumerate(names):
+            result += emotions[i] * user_weights[name]
+
+        return np.argmax(result)
 
     def get_frame(self):
         return self.flip_if_needed(self.vs.read())
 
     def send_frame(self, image_array):
         try:
-            res = requests.post('http://{}/detect_mood'.format(mood_server_ip),
+            res = requests.post('http://{}/detect/{}'.format(mood_server_ip, 2),
                           json={"image": image_array.tolist()},
                           timeout=8).json()
             
-            return res['emotions']
+            return res
         except Exception as e:
             print('Mood detection failed:', e)
             return int(random.random() * 7)
