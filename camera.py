@@ -3,10 +3,11 @@ import imutils
 import time
 import numpy as np
 import random
+import json
 import requests
 from imutils.video.pivideostream import PiVideoStream
 
-from constants import detection_duration
+from constants import detection_duration, mood_server_ip
 
 
 class VideoCamera(object):
@@ -58,18 +59,18 @@ class VideoCamera(object):
     
     def send_frame(self, image_array):
         try:
-            # TODO send request
-            res = requests.post('http://{}', format(),
-                          json={"data": image_array},
-                          timeout=3)
+            res = requests.post('http://{}/detect_mood'.format(mood_server_ip),
+                          json={"image": image_array.tolist()},
+                          timeout=8)
+            
+            print(res)
             
             print('detected mood:', res.text)
-            return res.text
-        except:
+            return res.text['emotion']
+        except Exception as e:
+            print(e)
             print('Failed mood detection')
-            pass
-        
-        return int(random.random() * 7)
+            return int(random.random() * 7)
 
 
 pi_camera = VideoCamera(flip=True)

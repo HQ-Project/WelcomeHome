@@ -3,16 +3,32 @@ import pafy
 import os
 from flask import Flask, render_template, Response, request, redirect, url_for
 
-from constants import server_port, light_settings_path, sounds_path
+from constants import server_port, light_settings_path, sounds_path, moods, light_settings_path
 
 
 # TODO delete end points ??
 app = Flask(__name__)
 
 
+def get_sounds():
+    ret = {}
+    
+    for k,v in moods.items():
+        sounds = os.listdir(sounds_path + '/' + v)
+        ret[v] = sounds
+    
+    return ret
+
+
+def get_light_settings():
+    with open(light_settings_path, 'r') as f:
+        data = json.load(f)
+        return data
+
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', feedback="", sounds=get_sounds(), lights=get_light_settings())
 
 
 @app.route('/add-custom-light', methods=['post'])
@@ -25,7 +41,7 @@ def add_light():
     with open(light_settings_path, "w") as f:
         json.dump(data, f)
     
-    return redirect(url_for('index'))
+    return render_template('index.html', feedback="Successful", sounds=get_sounds(), lights=get_light_settings())
 
 
 @app.route('/add-custom-sound', methods=['post'])
@@ -38,17 +54,15 @@ def add_sound():
             min_index = i
     
     path = sounds_path + '/' + request.form['sound-mood'] + '/' + request.form['sound-name'] + '.m4a'
-    print('path >>>> ', path)
     
     while True:
         try:
             result.audiostreams[i].download(path)
-            print('>>>>>>>>>> downloaded <<<<<<<<<<')
             break
         except:
             pass
     
-    return redirect(url_for('index'))
+    return render_template('index.html', feedback="Successful", sounds=get_sounds(), lights=get_light_settings())
 
 
 if __name__ == '__main__':
