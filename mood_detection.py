@@ -1,5 +1,7 @@
 import time
 import os
+import random
+import json
 import numpy as np
 import PIL.Image as Image
 from camera import VideoCamera
@@ -10,7 +12,10 @@ import ibmiotf.device
 from camera import pi_camera
 from sound_system import sound_system
 from light import light
-from constants import cooldown, moods
+from constants import cooldown, moods, users_path
+
+
+deviceCli = None
 
 
 def run_mood_detection(deviceCli):
@@ -25,6 +30,7 @@ def run_mood_detection(deviceCli):
             
             if detected_mood != -1:
                 print('Detected mood: ', moods[detected_mood])
+                deviceCli.publishEvent(event="result", data={"result": moods[detected_mood]}, msgFormat="json")
                 light.open_light(moods[detected_mood])
                 sound_system.play_music(moods[detected_mood])
                 
@@ -34,13 +40,17 @@ def run_mood_detection(deviceCli):
 
 
 def myCommandCallback(cmd):
-    print('hhhhh')
     if cmd.command == "image_response":
         print('Command callback')
         
         response = cmd.data
 
+        print(type(response["emotions"]))
+        print(response["emotions"])
         if isinstance(response["emotions"], int):
+            deviceCli.publishEvent(event="result", data={"result": "nothing"}, msgFormat="json")
+            pi_camera.result = int(random.random() * 7)
+            pi_camera.wait_response = False
             return response["emotions"]
         
         user_weights = {}

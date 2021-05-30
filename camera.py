@@ -49,8 +49,9 @@ class VideoCamera(object):
         self.wait_response = True
 
         print("begin while")
-        #while self.wait_response:
-        time.sleep(3)
+        while self.wait_response:
+            print(self.wait_response)
+            time.sleep(1)
         print("end while")
         
         return self.result
@@ -61,7 +62,7 @@ class VideoCamera(object):
     def send_frame(self, image_array, deviceCli):
         try:
             image_array = cv2.resize(image_array, (80, 60), interpolation=cv2.INTER_AREA)
-            data = {"image": image_array.tolist()}
+            data = {"image": image_array.tolist(), "device_id": 2}
             deviceCli.publishEvent(event="image", data=data, msgFormat="json")
             print('Sent image')
         except Exception as e:
