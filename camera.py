@@ -43,7 +43,11 @@ class VideoCamera(object):
     
     def detect_mood(self):
         response = self.send_frame(self.last_detected)
+        
+        if isinstance(response, int):
+            return response
 
+        print(response)
         print(type(response["found"]))
         print(response["found"])
         if response["found"] == False:
@@ -55,13 +59,24 @@ class VideoCamera(object):
 
         for user in data["users"]:
             user_weights[user["name"]] = user["weight"]
+        
+        # print(user_weights)
+        # print(data["users"])
+        # print(user_weights["Talha"])
 
-        emotions = np.array(response["emotions"])
+        emotions = np.asarray(response["emotions"], dtype=np.float64)
+        # print(emotions)
         names = response["names"]
+        # print(response["names"])
 
         result = np.zeros(7)
         for i, name in enumerate(names):
-            result += emotions[i] * user_weights[name]
+            # print('>>>>> ', emotions[i], user_weights[name])
+            for j in range(emotions.shape[1]):
+                prob = float(emotions[i,j])
+                result[j] += prob * int(user_weights[name])
+        
+        # print('resullttttt >>>>><<<<<##### ', result)
 
         return np.argmax(result)
 

@@ -1,1 +1,1 @@
-{"angry": {"bri": 140, "ct": 500}, "disgust": {"bri": 200, "ct": 200}, "fear": {"bri": 150, "ct": 270}, "happy": {"bri": 200, "ct": 350}, "sad": {"bri": 50, "ct": 200}, "suprise": {"bri": 210, "ct": 420}, "neutral": {"bri": 230, "ct": 200}}
+{"angry": {"bri": 40, "ct": 500}, "disgust": {"bri": 200, "ct": 200}, "fear": {"bri": 150, "ct": 270}, "happy": {"bri": 1, "ct": 153}, "sad": {"bri": 50, "ct": 200}, "suprise": {"bri": 210, "ct": 420}, "neutral": {"bri": 100, "ct": 500}}

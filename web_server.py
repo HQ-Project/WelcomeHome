@@ -108,10 +108,10 @@ def register_confirm(username):
     with open(users_path, "w") as f:
         json.dump(data, f)
     
-    time.sleep(2.5)
+    # time.sleep(15)
     
     try:
-        res = requests.get('http://{}/register_confirm/{}/{}'.format(mood_server_ip, 2, username)).json()
+        res = requests.get('http://{}/register_confirm/{}'.format(mood_server_ip, 2)).json()
         print('Confirmed', res)
     except Exception as e:
         print('Error:', e)

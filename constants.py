@@ -1,11 +1,11 @@
-hue_username = 'dffCqNSjvVck7X6vUeLGXUsal6KL1p7d01ZzuHEm'
+hue_username = 'fDjffJcRWx9S3S2EGwJ1frHQcFRUf-TXDRKMtGsA'
 
 
-bridge_ip = '192.168.1.25'
-mood_server_ip = '440cff810d8b.ngrok.io'
+bridge_ip = '139.179.209.112'
+mood_server_ip = '72286ea1a783.ngrok.io'
 server_port = 8818
 
-cooldown = 5 # TODO
+cooldown = 10 # TODO
 detection_duration = 120
 
 light_settings_path = './light_settings.json'
